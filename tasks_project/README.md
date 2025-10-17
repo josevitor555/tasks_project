@@ -1,13 +1,13 @@
-# Projeto TASKS
+### Projeto TASKS
 
 Projeto de estudo para criação de um sistema de gerenciamento de tarefas.
 
-# Componentes
+### Componentes
 Júlia Gabriela Sobral Santos
 José Vitor de Sousa Feitosa
 Maria Monalisa Andrade Macedo Moura
 
 ---
 
-# Status do Projeto
+### Status do Projeto
 Em desenvolvimento
