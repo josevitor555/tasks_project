@@ -34,10 +34,10 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-screen flex">
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-accent-foreground">
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-center">
-                        <h1 className="text-4xl font-bold text-foreground mb-2">
+                        <h1 className="text-4xl font-bold text-primary-foreground mb-2">
                             {isLoginView ? 'Bem-vindo de volta!' : 'Crie sua conta'}
                         </h1>
                         <p className="text-muted-foreground">
@@ -48,7 +48,7 @@ const LoginPage = () => {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="name" className="text-foreground text-base font-medium">
+                                <Label htmlFor="name" className="text-primary-foreground text-base font-medium">
                                     Nome
                                 </Label>
                                 <div className="relative">
@@ -66,7 +66,7 @@ const LoginPage = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-foreground text-base font-medium">
+                                <Label htmlFor="email" className="text-primary-foreground text-base font-medium">
                                     E-mail
                                 </Label>
                                 <div className="relative">
@@ -86,7 +86,7 @@ const LoginPage = () => {
                             {!isLoginView && (
                                 <>
                                     <div className="space-y-2">
-                                        <Label htmlFor="password" className="text-foreground text-base font-medium">
+                                        <Label htmlFor="password" className="text-primary-foreground text-base font-medium">
                                             Senha
                                         </Label>
                                         <div className="relative">
@@ -111,7 +111,7 @@ const LoginPage = () => {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="confirmPassword" className="text-foreground text-base font-medium">
+                                        <Label htmlFor="confirmPassword" className="text-primary-foreground text-base font-medium">
                                             Repetir Senha
                                         </Label>
                                         <div className="relative">
@@ -142,18 +142,18 @@ const LoginPage = () => {
                             <button
                                 type="button"
                                 onClick={toggleView}
-                                className="text-sm text-primary font-medium transition-colors cursor-pointer"
+                                className="text-sm text-accent font-medium transition-colors cursor-pointer"
                             >
                                 {isLoginView ? 'Não tens uma conta?' : 'Tens uma conta?'}
                             </button>
                         </div>
 
-                        <Button
+                        <button
                             type="submit"
-                            className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02]"
+                            className="w-full h-12 bg-accent text-accent-foreground cursor-pointer font-medium rounded-full"
                         >
                             {isLoginView ? 'Entrar' : 'Criar Uma Conta'}
-                        </Button>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -161,9 +161,9 @@ const LoginPage = () => {
             <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-accent to-accent/80 items-center justify-center p-4">
                 <div className="bg-card text-center flex flex-col items-center justify-center h-full py-16 rounded-lg">
                     <div className="p-4 inline-flex items-center justify-center mt-32 mb-8">
-                        <img 
-                            src="/logo_tasks-removebg-preview.png" 
-                            alt="Tasks Logo" 
+                        <img
+                            src="/logo_tasks-removebg-preview.png"
+                            alt="Tasks Logo"
                             width="620"
                             height="620"
                             className="object-contain"
