@@ -1,17 +1,25 @@
 // Style CSS
 import './App.css'
 
-// Shadcn components
-import { Button } from '@/components/ui/button'
+// React Router dom
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-const App = () => {
+// Pages
+import HomePage from './pages/Home';
 
+const Home = () => {
   return (
-    <div className="app flex flex-col justify-center items-center hover:underline">
-      Hello World!
-      <Button onClick={() => alert('Hello World!')}>Click me</Button>
-    </div>
-  );
+    <BrowserRouter>
+      <Routes>
+
+        {/* Home Page */}
+        <Route path='/' element={<HomePage />} />
+
+        {/* Page not found */}
+        <Route path='*' element={<h1>Page not found</h1>} />
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
-export default App;
+export default Home;
