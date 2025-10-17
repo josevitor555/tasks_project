@@ -5,7 +5,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Pages
-import HomePage from './pages/Home';
+import HomePage from './pages/LoginPage';
 
 const Home = () => {
   return (
