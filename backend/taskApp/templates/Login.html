@@ -1,13 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <h1>
-        Tela de login
+        Bem vindo a tela de login
     </h1>
+
+    <!-- Formulário de login -->
+    <form action="{% url 'login' %}" method="post">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email">
+        <br>
+        <label for="senha">Senha</label>
+        <input type="password" name="senha" id="senha">
+        <br>
+        <input type="submit" value="Entrar">
+    </form>
+    </input>
+    </input>
+    </form>
 </body>
+
 </html>
