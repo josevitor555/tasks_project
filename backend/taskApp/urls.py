@@ -4,7 +4,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('cadastro/', views.cadastro, name='cadastro'), # Cadastro de usuários
-    path('login/', views.login_view, name='login'), # Login de usuários
-    path('platform/', views.platform, name='platform')
+    # path('cadastro/', views.cadastro, name='cadastro'), # Cadastro de usuários
+    # path('login/', views.login_view, name='login'), # Login de usuários
+    # path('platform/', views.platform, name='platform'),
+    path('api/register/', views.UserRegistrationView.as_view(), name='api_register'), # API de cadastro
 ]
