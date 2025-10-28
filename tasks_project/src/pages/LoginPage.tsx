@@ -40,8 +40,8 @@ const LoginPage = () => {
                         <h1 className="text-4xl font-bold text-primary-foreground mb-2">
                             {isLoginView ? 'Bem-vindo de volta!' : 'Crie sua conta'}
                         </h1>
-                        <p className="text-muted-foreground">
-                            {isLoginView ? 'Faça login para continuar' : 'Gerencie suas tarefas de forma fácil'}
+                        <p className="text-[#fafafa]">
+                            {isLoginView ? 'Faça login para continuar' : 'Gerencie suas tarefas de forma fácil com TASKS'}
                         </p>
                     </div>
 
