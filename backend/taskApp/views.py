@@ -19,11 +19,19 @@ def cadastro(request):
         
         # Aqui você pode adicionar a lógica para salvar o usuário no banco de dados
         # Exemplo: User.objects.create_user(username=username, email=email, password=senha)
-        
-
 
         return HttpResponse(username.encode('utf-8'), content_type="text/plain; charset=utf-8")      
 
 #  Função para tela de login
 def login(request):
-    return render(request, 'login.html')
+    if request.method == 'GET':
+        return render(request, template_name='login.html')
+    else:
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        
+        # Verificação de campos vazios
+        if not username or not email:
+            return HttpResponse("Todos os campos são obrigatórios.".encode('utf-8'), content_type="text/plain; charset=utf-8")
+        
+        return HttpResponse(username.encode('utf-8'), content_type="text/plain; charset=utf-8")
