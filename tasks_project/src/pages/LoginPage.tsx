@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import { Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -29,7 +29,7 @@ const LoginPage = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         // Validação de campos
         if (!isLoginView) {
             // Validação para registro
@@ -37,15 +37,15 @@ const LoginPage = () => {
                 setMessage({ type: 'error', text: 'Todos os campos são obrigatórios.' });
                 return;
             }
-            
+
             if (formData.password !== formData.confirmPassword) {
                 setMessage({ type: 'error', text: 'As senhas não coincidem.' });
                 return;
             }
-            
+
             setLoading(true);
             setMessage(null);
-            
+
             try {
                 // Chamada para a API de registro
                 const response = await fetch('http://127.0.0.1:8000/auth/api/register/', {
@@ -59,9 +59,9 @@ const LoginPage = () => {
                         password: formData.password
                     }),
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.success) {
                     setMessage({ type: 'success', text: data.message });
                     // Limpar formulário após sucesso
@@ -112,7 +112,7 @@ const LoginPage = () => {
                             {isLoginView ? 'Bem-vindo de volta!' : 'Crie sua conta'}
                         </h1>
                         <p className="text-[#fafafa] font-roboto">
-                            {isLoginView ? 'Faça login para continuar' : 'Gerencie suas tarefas de forma fácil com TASKS'}
+                            {isLoginView ? 'Faça login para continuar' : 'Gerencie suas tarefas de forma fácil com Chronos'}
                         </p>
                     </div>
 
@@ -245,29 +245,33 @@ const LoginPage = () => {
             </div>
 
 
-            <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-accent to-accent/80 items-center justify-center p-4">
-                <div className="bg-card text-center flex flex-col items-center justify-center h-full py-16 rounded-lg">
+            <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#d87753] items-center justify-center p-4">
+                <div className="bg-white text-center flex flex-col items-center justify-center h-full w-full py-16 shadow-lg mx-2 mt-8 mb-8">
                     <div className="p-4 inline-flex items-center justify-center mt-32 mb-8 flex-col">
                         <img
                             src="/Chronos.svg"
                             alt="Tasks Logo"
-                            width="240"
-                            height="240"
+                            width="180"
+                            height="180"
                             className="object-contain"
                         />
                         <p className="text-[#2A2A2A] text-6xl font-bold font-raleway mt-4">
-                            Chronos
+                            CHRONOS
                         </p>
                     </div>
-                    <Button
+                    <button
                         type="button"
-                        className="w-full max-w-sm h-12 bg-[#d87753] rounded-full flex items-center justify-center gap-2 mt-auto font-raleway text-base px-4"
+                        className="w-full max-w-md h-12 bg-[#d87753] rounded-full flex items-center justify-center gap-2 mt-auto font-raleway text-base px-6 py-3"
                     >
                         <Lock className="h-5 w-5" />
                         Autenticação 2F
-                        <span className="text-xs bg-primary-foreground/20 px-2 py-1 rounded text-primary-foreground font-roboto">Sua conta será protegida com 2F</span>
-                    </Button>
-
+                        <span className="text-xs bg-primary-foreground/20 px-2 py-1 rounded text-primary-foreground font-roboto">
+                            Sua conta será protegida com 2F
+                        </span>
+                    </button>
+                    <div className="mt-8 text-center text-sm text-[#2A2A2A] font-roboto">
+                        Feito com ❤️ por José Vitor, Monalisa e Júlia
+                    </div>
                 </div>
             </div>
         </div>
