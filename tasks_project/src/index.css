@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Definir a fonte Merriweather como principal (serifada) */
+:root {
+  --font-merriweather: 'Merriweather', serif;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -118,5 +123,6 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-merriweather); /* Usar Merriweather como fonte principal */
   }
 }

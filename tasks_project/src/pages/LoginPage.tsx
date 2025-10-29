@@ -66,7 +66,7 @@ const LoginPage = () => {
                     setMessage({ type: 'success', text: data.message });
                     // Limpar formulário após sucesso
                     setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-                    // Redirecionar para o dashboard após 2 segundos
+                    // Redirecionar para o dashboard após 6 segundos
                     setTimeout(() => {
                         navigate('/dashboard');
                     }, 6000);
@@ -92,21 +92,33 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex">
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-accent-foreground">
+        <div className="min-h-screen flex font-roboto">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#d87753]">
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-center">
-                        <h1 className="text-4xl font-bold text-primary-foreground mb-2">
+                        <div className="flex justify-center mb-4">
+                            <img
+                                src="/Chronos.svg"
+                                alt="Chronos Logo"
+                                width="80"
+                                height="80"
+                                className="object-containh-20 w-20"
+                                style={{ filter: "invert(1)" }}
+                                role="img"
+                                aria-label="Chronos Logo"
+                            />
+                        </div>
+                        <h1 className="text-4xl font-bold text-primary-foreground mb-2 font-raleway">
                             {isLoginView ? 'Bem-vindo de volta!' : 'Crie sua conta'}
                         </h1>
-                        <p className="text-[#fafafa]">
+                        <p className="text-[#fafafa] font-roboto">
                             {isLoginView ? 'Faça login para continuar' : 'Gerencie suas tarefas de forma fácil com TASKS'}
                         </p>
                     </div>
 
                     {/* Mensagens de feedback */}
                     {message && (
-                        <div className={`p-3 rounded-md ${message.type === 'error' ? 'bg-red-500' : message.type === 'success' ? 'bg-green-500' : 'bg-blue-500'} text-white`}>
+                        <div className={`p-3 rounded-md ${message.type === 'error' ? 'bg-red-500' : message.type === 'success' ? 'bg-green-500' : 'bg-blue-500'} text-white font-roboto`}>
                             {message.text}
                         </div>
                     )}
@@ -114,7 +126,7 @@ const LoginPage = () => {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="name" className="text-primary-foreground text-base font-medium">
+                                <Label htmlFor="name" className="text-primary-foreground text-base font-medium font-raleway">
                                     Nome
                                 </Label>
                                 <div className="relative">
@@ -126,14 +138,14 @@ const LoginPage = () => {
                                         placeholder="Entre com seu nome completo"
                                         value={formData.name}
                                         onChange={handleInputChange}
-                                        className="pl-10 h-12 border border-input focus:border-primary focus:ring-primary"
+                                        className="pl-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
                                         disabled={loading}
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-primary-foreground text-base font-medium">
+                                <Label htmlFor="email" className="text-primary-foreground text-base font-medium font-raleway">
                                     E-mail
                                 </Label>
                                 <div className="relative">
@@ -145,7 +157,7 @@ const LoginPage = () => {
                                         placeholder="Entre com seu e-mail"
                                         value={formData.email}
                                         onChange={handleInputChange}
-                                        className="pl-10 h-12 border border-input focus:border-primary focus:ring-primary"
+                                        className="pl-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
                                         disabled={loading}
                                     />
                                 </div>
@@ -154,7 +166,7 @@ const LoginPage = () => {
                             {!isLoginView && (
                                 <>
                                     <div className="space-y-2">
-                                        <Label htmlFor="password" className="text-primary-foreground text-base font-medium">
+                                        <Label htmlFor="password" className="text-primary-foreground text-base font-medium font-raleway">
                                             Senha
                                         </Label>
                                         <div className="relative">
@@ -166,7 +178,7 @@ const LoginPage = () => {
                                                 placeholder="Entre com sua senha"
                                                 value={formData.password}
                                                 onChange={handleInputChange}
-                                                className="pl-10 pr-10 h-12 border border-input focus:border-primary focus:ring-primary"
+                                                className="pl-10 pr-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
                                                 disabled={loading}
                                             />
                                             <button
@@ -181,7 +193,7 @@ const LoginPage = () => {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="confirmPassword" className="text-primary-foreground text-base font-medium">
+                                        <Label htmlFor="confirmPassword" className="text-primary-foreground text-base font-medium font-raleway">
                                             Repetir Senha
                                         </Label>
                                         <div className="relative">
@@ -193,7 +205,7 @@ const LoginPage = () => {
                                                 placeholder="Repetir Senha"
                                                 value={formData.confirmPassword}
                                                 onChange={handleInputChange}
-                                                className="pl-10 pr-10 h-12 border border-input focus:border-primary focus:ring-primary"
+                                                className="pl-10 pr-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
                                                 disabled={loading}
                                             />
                                             <button
@@ -214,7 +226,7 @@ const LoginPage = () => {
                             <button
                                 type="button"
                                 onClick={toggleView}
-                                className="text-sm text-accent font-medium transition-colors cursor-pointer"
+                                className="text-sm text-accent font-medium transition-colors cursor-pointer font-roboto"
                                 disabled={loading}
                             >
                                 {isLoginView ? 'Não tens uma conta?' : 'Tens uma conta?'}
@@ -223,7 +235,7 @@ const LoginPage = () => {
 
                         <button
                             type="submit"
-                            className="w-full h-12 bg-accent text-accent-foreground cursor-pointer font-medium rounded-full disabled:opacity-50"
+                            className="w-full h-12 bg-accent text-accent-foreground cursor-pointer font-medium rounded-full disabled:opacity-50 font-raleway"
                             disabled={loading}
                         >
                             {loading ? 'Processando...' : (isLoginView ? 'Entrar' : 'Criar Uma Conta')}
@@ -232,25 +244,30 @@ const LoginPage = () => {
                 </div>
             </div>
 
+
             <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-accent to-accent/80 items-center justify-center p-4">
                 <div className="bg-card text-center flex flex-col items-center justify-center h-full py-16 rounded-lg">
-                    <div className="p-4 inline-flex items-center justify-center mt-32 mb-8">
+                    <div className="p-4 inline-flex items-center justify-center mt-32 mb-8 flex-col">
                         <img
-                            src="/logo_tasks-removebg-preview.png"
+                            src="/Chronos.svg"
                             alt="Tasks Logo"
-                            width="620"
-                            height="620"
+                            width="240"
+                            height="240"
                             className="object-contain"
                         />
+                        <p className="text-[#2A2A2A] text-6xl font-bold font-raleway mt-4">
+                            Chronos
+                        </p>
                     </div>
                     <Button
                         type="button"
-                        className="w-full max-w-sm h-12 bg-primary rounded-full flex items-center justify-center gap-2 mt-auto"
+                        className="w-full max-w-sm h-12 bg-[#d87753] rounded-full flex items-center justify-center gap-2 mt-auto font-raleway text-base px-4"
                     >
                         <Lock className="h-5 w-5" />
                         Autenticação 2F
-                        <span className="text-xs bg-primary-foreground/20 px-2 py-1 rounded text-primary-foreground">Sua conta será protegida com 2F</span>
+                        <span className="text-xs bg-primary-foreground/20 px-2 py-1 rounded text-primary-foreground font-roboto">Sua conta será protegida com 2F</span>
                     </Button>
+
                 </div>
             </div>
         </div>
