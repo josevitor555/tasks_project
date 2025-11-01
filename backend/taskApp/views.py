@@ -10,59 +10,6 @@ import json
 
 # Create your views here.
 
-#  Função para cadastrar usuário
-# def cadastro(request):
-#     if request.method == 'GET':
-#         return render(request, template_name='cadastro.html')
-#     else:
-#         username = request.POST.get('username')
-
-#         email = request.POST.get('email')
-#         senha = request.POST.get('senha')
-
-#         user = User.objects.filter(username=username).first()
-
-#         # Verificação de usuário já existente
-#         if user:
-#             return HttpResponse("Já existe um usuário com esse username!".encode('utf-8'), content_type="text/plain; charset=utf-8")
-        
-#         # Verificação de campos vazios
-#         if not username or not email or not senha:
-#             return HttpResponse("Todos os campos são obrigatórios.".encode('utf-8'), content_type="text/plain; charset=utf-8")
-
-#         user = User.objects.create_user(username=username, email=email, password=senha)
-#         user.save() # Salva o usuário no banco de dados
-
-#         return HttpResponse("Usuário cadastrado com sucesso!".encode('utf-8'), content_type="text/plain; charset=utf-8")     
-
-# #  Função para tela de login
-# def login_view(request):
-#     if request.method == 'GET':
-#         return render(request, template_name='login.html')
-#     else:
-#         username = request.POST.get('username')
-#         email = request.POST.get('email')
-
-#         # Buscar usuário diretamente pelo username e email
-#         try:
-#             user = User.objects.get(username=username, email=email)
-#         except ObjectDoesNotExist:
-#             user = None
-        
-#         # Verificação de usuário existente no banco de dados
-#         if user:
-#             auth_login(request, user)
-#             return HttpResponse("Usuário logado com sucesso!".encode('utf-8'), content_type="text/plain; charset=utf-8")
-#         else:
-#             return HttpResponse("Usuário ou email incorretos!".encode('utf-8'), content_type="text/plain; charset=utf-8")
-
-# def platform(request):
-#     if request.user.is_authenticated:
-#         return render(request, template_name='platform.html')
-    
-#     return HttpResponse('Você precisa estar logado para acessar essa página!'.encode('utf-8'), content_type="text/plain; charset=utf-8")
-#     # return render('Você precisa estar logado para acessar essa página!'.encode('utf-8'), content_type="text/plain; charset=utf-8")
-
 # API View para cadastro de usuários via REST
 @method_decorator(csrf_exempt, name='dispatch')
 class UserRegistrationView(View):
@@ -73,12 +20,91 @@ class UserRegistrationView(View):
             username = data.get('name')
             email = data.get('email')
             password = data.get('password')
+            confirm_password = data.get('confirmPassword')
             
             # Verificação de campos obrigatórios
             if not username or not email or not password:
                 return JsonResponse({
                     'success': False,
                     'message': 'Todos os campos são obrigatórios.'
+                }, status=400)
+            
+            # Verificação de confirmação de senha
+            if password != confirm_password:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'As senhas não coincidem.'
+                }, status=400)
+            
+            # Validação do nome (apenas letras, acentos, espaços e cedilha, máximo 50 caracteres)
+            if len(username) > 50:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'O nome deve ter no máximo 50 caracteres.'
+                }, status=400)
+            
+            # Verificar caracteres válidos (letras, acentos, espaços e cedilha)
+            import re
+            if not re.match(r'^[a-zA-ZÀ-ÿ\s]+$', username):
+                return JsonResponse({
+                    'success': False,
+                    'message': 'O nome deve conter apenas letras, acentos, espaços e cedilha.'
+                }, status=400)
+            
+            # Verificar espaços consecutivos
+            if '  ' in username:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'O nome não deve conter espaços consecutivos.'
+                }, status=400)
+            
+            # Verificar se começa ou termina com espaço
+            if username.startswith(' ') or username.endswith(' '):
+                return JsonResponse({
+                    'success': False,
+                    'message': 'O nome não deve começar ou terminar com espaço.'
+                }, status=400)
+            
+            # Validação do e-mail (formato válido e máximo 50 caracteres)
+            if len(email) > 50:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'O e-mail deve ter no máximo 50 caracteres.'
+                }, status=400)
+            
+            # Verificar formato do e-mail
+            if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
+                return JsonResponse({
+                    'success': False,
+                    'message': 'O e-mail deve estar em um formato válido.'
+                }, status=400)
+            
+            # Validação da senha (entre 8 e 20 caracteres, pelo menos uma letra maiúscula, um número e um caractere especial)
+            if len(password) < 8 or len(password) > 20:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'A senha deve ter entre 8 e 20 caracteres.'
+                }, status=400)
+            
+            # Verificar se contém pelo menos uma letra maiúscula
+            if not re.search(r'[A-Z]', password):
+                return JsonResponse({
+                    'success': False,
+                    'message': 'A senha deve conter pelo menos uma letra maiúscula.'
+                }, status=400)
+            
+            # Verificar se contém pelo menos um número
+            if not re.search(r'[0-9]', password):
+                return JsonResponse({
+                    'success': False,
+                    'message': 'A senha deve conter pelo menos um número.'
+                }, status=400)
+            
+            # Verificar se contém pelo menos um caractere especial
+            if not re.search(r'[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]', password):
+                return JsonResponse({
+                    'success': False,
+                    'message': 'A senha deve conter pelo menos um caractere especial.'
                 }, status=400)
             
             # Verificação de usuário já existente

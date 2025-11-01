@@ -5,6 +5,16 @@ import { Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
 // import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose
+} from '@/components/ui/animated-dialog';
+import { Button } from '@/components/ui/button';
 
 const LoginPage = () => {
     const navigate = useNavigate(); // Initialize useNavigate hook
@@ -19,12 +29,91 @@ const LoginPage = () => {
     });
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: string; text: string } | null>(null);
+    const [showDialog, setShowDialog] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
+    };
+
+    // Função para validar o nome conforme as regras especificadas
+    const validateName = (name: string): boolean => {
+        // Verificar se o nome tem mais de 50 caracteres
+        if (name.length > 50) {
+            return false;
+        }
+
+        // Expressão regular para validar caracteres permitidos:
+        // - Letras maiúsculas e minúsculas (incluindo acentos e ç)
+        // - Espaços em branco
+        const nameRegex = /^[a-zA-ZÀ-ÿ\s]+$/;
+
+        // Verificar se todos os caracteres são válidos
+        if (!nameRegex.test(name)) {
+            return false;
+        }
+
+        // Verificar se há espaços consecutivos
+        if (name.includes('  ')) {
+            return false;
+        }
+
+        // Verificar se começa ou termina com espaço
+        if (name.startsWith(' ') || name.endsWith(' ')) {
+            return false;
+        }
+
+        // Se passou por todas as validações, o nome é válido
+        return true;
+    };
+
+    // Função para validar o e-mail conforme as regras especificadas
+    const validateEmail = (email: string): boolean => {
+        // Verificar se o e-mail tem mais de 50 caracteres
+        if (email.length > 50) {
+            return false;
+        }
+
+        // Expressão regular para validar o formato do e-mail
+        // Aceita subdomínios e caracteres especiais permitidos no nome de usuário
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Verificar se o e-mail está no formato válido
+        if (!emailRegex.test(email)) {
+            return false;
+        }
+
+        // Se passou por todas as validações, o e-mail é válido
+        return true;
+    };
+
+    // Função para validar a senha conforme as regras especificadas
+    const validatePassword = (password: string): boolean => {
+        // Verificar o comprimento da senha (entre 8 e 20 caracteres)
+        if (password.length < 8 || password.length > 20) {
+            return false;
+        }
+
+        // Verificar se contém pelo menos uma letra maiúscula
+        if (!/[A-Z]/.test(password)) {
+            return false;
+        }
+
+        // Verificar se contém pelo menos um número
+        if (!/[0-9]/.test(password)) {
+            return false;
+        }
+
+        // Verificar se contém pelo menos um caractere especial
+        const specialChars = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/;
+        if (!specialChars.test(password)) {
+            return false;
+        }
+
+        // Se passou por todas as validações, a senha é válida
+        return true;
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,11 +124,43 @@ const LoginPage = () => {
             // Validação para registro
             if (!formData.name || !formData.email || !formData.password) {
                 setMessage({ type: 'error', text: 'Todos os campos são obrigatórios.' });
+                setShowDialog(true);
+                return;
+            }
+
+            // Validar o formato do nome
+            if (!validateName(formData.name)) {
+                setMessage({
+                    type: 'error',
+                    text: 'Nome inválido. Use apenas letras, acentos, espaços e cedilha. Máximo de 50 caracteres.'
+                });
+                setShowDialog(true);
+                return;
+            }
+
+            // Validar o formato do e-mail
+            if (!validateEmail(formData.email)) {
+                setMessage({
+                    type: 'error',
+                    text: 'E-mail inválido. Deve conter nome de usuário, @ e domínio. Máximo de 50 caracteres.'
+                });
+                setShowDialog(true);
+                return;
+            }
+
+            // Validar o formato da senha
+            if (!validatePassword(formData.password)) {
+                setMessage({
+                    type: 'error',
+                    text: 'Senha inválida. Deve ter entre 8 e 20 caracteres, incluindo pelo menos uma letra maiúscula, um número e um caractere especial.'
+                });
+                setShowDialog(true);
                 return;
             }
 
             if (formData.password !== formData.confirmPassword) {
                 setMessage({ type: 'error', text: 'As senhas não coincidem.' });
+                setShowDialog(true);
                 return;
             }
 
@@ -56,25 +177,30 @@ const LoginPage = () => {
                     body: JSON.stringify({
                         name: formData.name,
                         email: formData.email,
-                        password: formData.password
+                        password: formData.password,
+                        confirmPassword: formData.confirmPassword
                     }),
                 });
 
+                // Verificar se a resposta da API foi bem-sucedida
                 const data = await response.json();
 
                 if (data.success) {
                     setMessage({ type: 'success', text: data.message });
+                    setShowDialog(true);
                     // Limpar formulário após sucesso
                     setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-                    // Redirecionar para o dashboard após 6 segundos
+                    // Redirecionar para o dashboard após 2 segundos
                     setTimeout(() => {
                         navigate('/dashboard');
-                    }, 6000);
+                    }, 2000);
                 } else {
                     setMessage({ type: 'error', text: data.message });
+                    setShowDialog(true);
                 }
             } catch (error) {
                 setMessage({ type: 'error', text: 'Erro ao conectar com o servidor.' });
+                setShowDialog(true);
                 console.error('Erro:', error);
             } finally {
                 setLoading(false);
@@ -82,6 +208,7 @@ const LoginPage = () => {
         } else {
             // Para a view de login, podemos adicionar a lógica aqui posteriormente
             setMessage({ type: 'info', text: 'Funcionalidade de login ainda não implementada.' });
+            setShowDialog(true);
         }
     };
 
@@ -93,6 +220,32 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-screen flex font-roboto">
+            
+            {/* Componente de Diálogo */}
+            <Dialog open={showDialog} onOpenChange={setShowDialog}>
+                <DialogContent className="sm:max-w-[425px] bg-white data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
+                    <DialogHeader>
+                        <DialogTitle className={message?.type === 'success' ? 'text-green-600' : message?.type === 'error' ? 'text-red-600' : 'text-blue-600'}>
+                            {message?.type === 'success' ? 'Sucesso' : message?.type === 'error' ? 'Erro' : 'Informação'}
+                        </DialogTitle>
+                        <DialogDescription>
+                            {message?.text}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button 
+                                type="button" 
+                                variant={message?.type === 'success' ? 'default' : 'outline'}
+                                className={message?.type === 'success' ? '' : 'border border-input'}
+                            >
+                                {message?.type === 'success' ? 'Continuar' : 'Tentar Novamente'}
+                            </Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#d87753]">
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-center">
@@ -115,13 +268,6 @@ const LoginPage = () => {
                             {isLoginView ? 'Faça login para continuar' : 'Gerencie suas tarefas de forma fácil com Chronos'}
                         </p>
                     </div>
-
-                    {/* Mensagens de feedback */}
-                    {message && (
-                        <div className={`p-3 rounded-md ${message.type === 'error' ? 'bg-red-500' : message.type === 'success' ? 'bg-green-500' : 'bg-blue-500'} text-white font-roboto`}>
-                            {message.text}
-                        </div>
-                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-6">
@@ -247,7 +393,7 @@ const LoginPage = () => {
 
             <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#d87753] items-center justify-center p-4">
                 <div className="bg-white text-center flex flex-col items-center justify-center h-full w-full py-16 shadow-lg mx-2 mt-8 mb-8">
-                    <div className="p-4 inline-flex items-center justify-center mt-32 mb-8 flex-col">
+                    <div className="p-4 inline-flex items-center justify-center mt-54 mb-8 flex-col">
                         <img
                             src="/Chronos.svg"
                             alt="Tasks Logo"
@@ -269,9 +415,9 @@ const LoginPage = () => {
                             Sua conta será protegida com 2F
                         </span>
                     </button>
-                    <div className="mt-8 text-center text-sm text-[#2A2A2A] font-roboto">
+                    {/* <div className="mt-8 text-center text-sm text-[#2A2A2A] font-roboto">
                         Feito com ❤️ por José Vitor, Monalisa e Júlia
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
