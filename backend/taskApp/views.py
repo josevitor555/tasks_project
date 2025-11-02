@@ -126,7 +126,8 @@ class UserRegistrationView(View):
             
             return JsonResponse({
                 'success': True,
-                'message': 'Usuário cadastrado com sucesso!'
+                'message': f'Seja bem vindo, {username}',
+                'username': username
             })
             
         except json.JSONDecodeError:
@@ -138,4 +139,50 @@ class UserRegistrationView(View):
             return JsonResponse({
                 'success': False,
                 'message': f'Erro ao cadastrar usuário: {str(e)}'
+            }, status=500)
+
+# API View para login de usuários via REST
+@method_decorator(csrf_exempt, name='dispatch')
+class UserLoginView(View):
+    def post(self, request):
+        try:
+            # Parse do corpo da requisição JSON
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+            
+            # Verificação de campos obrigatórios
+            if not username or not password:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Nome de usuário e senha são obrigatórios.'
+                }, status=400)
+            
+            # Autenticação do usuário
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                # Login bem-sucedido
+                auth_login(request, user)
+                return JsonResponse({
+                    'success': True,
+                    'message': f'Seja bem vindo, {user.username}',
+                    'username': user.username
+                })
+            else:
+                # Credenciais inválidas
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Nome de usuário ou senha inválidos.'
+                }, status=400)
+                
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Dados inválidos fornecidos.'
+            }, status=400)
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Erro ao fazer login: {str(e)}'
             }, status=500)

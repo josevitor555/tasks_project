@@ -18,12 +18,13 @@ import { Button } from '@/components/ui/button';
 
 const LoginPage = () => {
     const navigate = useNavigate(); // Initialize useNavigate hook
-    const [isLoginView, setIsLoginView] = useState(false);
+    const [isLoginView, setIsLoginView] = useState(true); // Changed default to login view
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        username: '', // Added username field
         password: '',
         confirmPassword: ''
     });
@@ -116,105 +117,165 @@ const LoginPage = () => {
         return true;
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    // Função para lidar com o envio do formulário de login
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         // Validação de campos
-        if (!isLoginView) {
-            // Validação para registro
-            if (!formData.name || !formData.email || !formData.password) {
-                setMessage({ type: 'error', text: 'Todos os campos são obrigatórios.' });
-                setShowDialog(true);
-                return;
-            }
-
-            // Validar o formato do nome
-            if (!validateName(formData.name)) {
-                setMessage({
-                    type: 'error',
-                    text: 'Nome inválido. Use apenas letras, acentos, espaços e cedilha. Máximo de 50 caracteres.'
-                });
-                setShowDialog(true);
-                return;
-            }
-
-            // Validar o formato do e-mail
-            if (!validateEmail(formData.email)) {
-                setMessage({
-                    type: 'error',
-                    text: 'E-mail inválido. Deve conter nome de usuário, @ e domínio. Máximo de 50 caracteres.'
-                });
-                setShowDialog(true);
-                return;
-            }
-
-            // Validar o formato da senha
-            if (!validatePassword(formData.password)) {
-                setMessage({
-                    type: 'error',
-                    text: 'Senha inválida. Deve ter entre 8 e 20 caracteres, incluindo pelo menos uma letra maiúscula, um número e um caractere especial.'
-                });
-                setShowDialog(true);
-                return;
-            }
-
-            if (formData.password !== formData.confirmPassword) {
-                setMessage({ type: 'error', text: 'As senhas não coincidem.' });
-                setShowDialog(true);
-                return;
-            }
-
-            setLoading(true);
-            setMessage(null);
-
-            try {
-                // Chamada para a API de registro
-                const response = await fetch('http://127.0.0.1:8000/auth/api/register/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: formData.name,
-                        email: formData.email,
-                        password: formData.password,
-                        confirmPassword: formData.confirmPassword
-                    }),
-                });
-
-                // Verificar se a resposta da API foi bem-sucedida
-                const data = await response.json();
-
-                if (data.success) {
-                    setMessage({ type: 'success', text: data.message });
-                    setShowDialog(true);
-                    // Limpar formulário após sucesso
-                    setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-                    // Redirecionar para o dashboard após 2 segundos
-                    setTimeout(() => {
-                        navigate('/dashboard');
-                    }, 2000);
-                } else {
-                    setMessage({ type: 'error', text: data.message });
-                    setShowDialog(true);
-                }
-            } catch (error) {
-                setMessage({ type: 'error', text: 'Erro ao conectar com o servidor.' });
-                setShowDialog(true);
-                console.error('Erro:', error);
-            } finally {
-                setLoading(false);
-            }
-        } else {
-            // Para a view de login, podemos adicionar a lógica aqui posteriormente
-            setMessage({ type: 'info', text: 'Funcionalidade de login ainda não implementada.' });
+        if (!formData.username || !formData.password) {
+            setMessage({ type: 'error', text: 'Nome de usuário e senha são obrigatórios.' });
             setShowDialog(true);
+            return;
+        }
+
+        setLoading(true);
+        setMessage(null);
+
+        try {
+            // Chamada para a API de login
+            const response = await fetch('http://127.0.0.1:8000/auth/api/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: formData.username,
+                    password: formData.password
+                }),
+            });
+
+            // Verificar se a resposta da API foi bem-sucedida
+            const data = await response.json();
+
+            if (data.success) {
+                
+                // Store username in localStorage
+                localStorage.setItem('username', data.username);
+                setMessage({ type: 'success', text: data.message });
+                setShowDialog(true);
+
+                // Redirecionar para o dashboard após 2 segundos
+                setTimeout(() => {
+                    navigate('/dashboard');
+                }, 2000);
+            } else {
+                setMessage({ type: 'error', text: data.message });
+                setShowDialog(true);
+            }
+        } catch (error) {
+            setMessage({ type: 'error', text: 'Erro ao conectar com o servidor.' });
+            setShowDialog(true);
+            console.error('Erro:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        // Validação de campos
+        if (!formData.name || !formData.email || !formData.password) {
+            setMessage({ type: 'error', text: 'Todos os campos são obrigatórios.' });
+            setShowDialog(true);
+            return;
+        }
+
+        // Validar o formato do nome
+        if (!validateName(formData.name)) {
+            setMessage({
+                type: 'error',
+                text: 'Nome inválido. Use apenas letras, acentos, espaços e cedilha. Máximo de 50 caracteres.'
+            });
+            setShowDialog(true);
+            return;
+        }
+
+        // Validar o formato do e-mail
+        if (!validateEmail(formData.email)) {
+            setMessage({
+                type: 'error',
+                text: 'E-mail inválido. Deve conter nome de usuário, @ e domínio. Máximo de 50 caracteres.'
+            });
+            setShowDialog(true);
+            return;
+        }
+
+        // Validar o formato da senha
+        if (!validatePassword(formData.password)) {
+            setMessage({
+                type: 'error',
+                text: 'Senha inválida. Deve ter entre 8 e 20 caracteres, incluindo pelo menos uma letra maiúscula, um número e um caractere especial.'
+            });
+            setShowDialog(true);
+            return;
+        }
+
+        if (formData.password !== formData.confirmPassword) {
+            setMessage({ type: 'error', text: 'As senhas não coincidem.' });
+            setShowDialog(true);
+            return;
+        }
+
+        setLoading(true);
+        setMessage(null);
+
+        try {
+            // Chamada para a API de registro
+            const response = await fetch('http://127.0.0.1:8000/auth/api/register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    password: formData.password,
+                    confirmPassword: formData.confirmPassword
+                }),
+            });
+
+            // Verificar se a resposta da API foi bem-sucedida
+            const data = await response.json();
+
+            if (data.success) {
+                // Store username in localStorage
+                localStorage.setItem('username', formData.name);
+                setMessage({ type: 'success', text: data.message });
+                setShowDialog(true);
+                // Limpar formulário após sucesso
+                setFormData({ name: '', email: '', username: '', password: '', confirmPassword: '' });
+                // Redirecionar para o dashboard após 2 segundos
+                setTimeout(() => {
+                    navigate('/dashboard');
+                }, 2000);
+            } else {
+                setMessage({ type: 'error', text: data.message });
+                setShowDialog(true);
+            }
+        } catch (error) {
+            setMessage({ type: 'error', text: 'Erro ao conectar com o servidor.' });
+            setShowDialog(true);
+            console.error('Erro:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        
+        // Determinar se é a vista de login ou de registro
+        if (isLoginView) {
+            await handleLogin(e);
+        } else {
+            await handleRegister(e);
         }
     };
 
     const toggleView = () => {
         setIsLoginView(!isLoginView);
-        setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+        setFormData({ name: '', email: '', username: '', password: '', confirmPassword: '' });
         setMessage(null);
     };
 
@@ -271,100 +332,121 @@ const LoginPage = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-6">
-                            <div className="space-y-2">
-                                <Label htmlFor="name" className="text-primary-foreground text-base font-medium font-raleway">
-                                    Nome
-                                </Label>
-                                <div className="relative">
-                                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                                    <Input
-                                        id="name"
-                                        name="name"
-                                        type="text"
-                                        placeholder="Entre com seu nome completo"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        className="pl-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
-                                        disabled={loading}
-                                    />
+                            {!isLoginView && (
+                                <div className="space-y-2">
+                                    <Label htmlFor="name" className="text-primary-foreground text-base font-medium font-raleway">
+                                        Nome
+                                    </Label>
+                                    <div className="relative">
+                                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                                        <Input
+                                            id="name"
+                                            name="name"
+                                            type="text"
+                                            placeholder="Entre com seu nome completo"
+                                            value={formData.name}
+                                            onChange={handleInputChange}
+                                            className="pl-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
+                                            disabled={loading}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+                            )}
+
+                            {isLoginView ? (
+                                <div className="space-y-2">
+                                    <Label htmlFor="username" className="text-primary-foreground text-base font-medium font-raleway">
+                                        Nome de Usuário
+                                    </Label>
+                                    <div className="relative">
+                                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                                        <Input
+                                            id="username"
+                                            name="username"
+                                            type="text"
+                                            placeholder="Entre com seu nome de usuário"
+                                            value={formData.username}
+                                            onChange={handleInputChange}
+                                            className="pl-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
+                                            disabled={loading}
+                                        />
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-2">
+                                    <Label htmlFor="email" className="text-primary-foreground text-base font-medium font-raleway">
+                                        E-mail
+                                    </Label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                                        <Input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            placeholder="Entre com seu e-mail"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            className="pl-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
+                                            disabled={loading}
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-primary-foreground text-base font-medium font-raleway">
-                                    E-mail
+                                <Label htmlFor="password" className="text-primary-foreground text-base font-medium font-raleway">
+                                    Senha
                                 </Label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                                     <Input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        placeholder="Entre com seu e-mail"
-                                        value={formData.email}
+                                        id="password"
+                                        name="password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        placeholder="Entre com sua senha"
+                                        value={formData.password}
                                         onChange={handleInputChange}
-                                        className="pl-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
+                                        className="pl-10 pr-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
                                         disabled={loading}
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                        disabled={loading}
+                                    >
+                                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                    </button>
                                 </div>
                             </div>
 
                             {!isLoginView && (
-                                <>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="password" className="text-primary-foreground text-base font-medium font-raleway">
-                                            Senha
-                                        </Label>
-                                        <div className="relative">
-                                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                                            <Input
-                                                id="password"
-                                                name="password"
-                                                type={showPassword ? 'text' : 'password'}
-                                                placeholder="Entre com sua senha"
-                                                value={formData.password}
-                                                onChange={handleInputChange}
-                                                className="pl-10 pr-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
-                                                disabled={loading}
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                                disabled={loading}
-                                            >
-                                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                                            </button>
-                                        </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="confirmPassword" className="text-primary-foreground text-base font-medium font-raleway">
+                                        Repetir Senha
+                                    </Label>
+                                    <div className="relative">
+                                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                                        <Input
+                                            id="confirmPassword"
+                                            name="confirmPassword"
+                                            type={showConfirmPassword ? 'text' : 'password'}
+                                            placeholder="Repetir Senha"
+                                            value={formData.confirmPassword}
+                                            onChange={handleInputChange}
+                                            className="pl-10 pr-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
+                                            disabled={loading}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                            disabled={loading}
+                                        >
+                                            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                        </button>
                                     </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="confirmPassword" className="text-primary-foreground text-base font-medium font-raleway">
-                                            Repetir Senha
-                                        </Label>
-                                        <div className="relative">
-                                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                                            <Input
-                                                id="confirmPassword"
-                                                name="confirmPassword"
-                                                type={showConfirmPassword ? 'text' : 'password'}
-                                                placeholder="Repetir Senha"
-                                                value={formData.confirmPassword}
-                                                onChange={handleInputChange}
-                                                className="pl-10 pr-10 h-12 border border-input focus:border-primary focus:ring-primary font-roboto"
-                                                disabled={loading}
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                                disabled={loading}
-                                            >
-                                                {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </>
+                                </div>
                             )}
                         </div>
 
